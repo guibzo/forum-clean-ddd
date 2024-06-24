@@ -7,7 +7,7 @@ let inMemoryAnswersRepository: InMemoryAnswersRepository
 let inMemoryAnswerCommentsRepository: InMemoryAnswerCommentsRepository
 let sut: CommentOnAnswerUseCase
 
-describe('Create answer', () => {
+describe('Comment on answer', () => {
   beforeEach(() => {
     inMemoryAnswersRepository = new InMemoryAnswersRepository()
     inMemoryAnswerCommentsRepository = new InMemoryAnswerCommentsRepository()
