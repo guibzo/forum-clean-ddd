@@ -1,3 +1,4 @@
+import { Success } from '@/core/either-failure-or-success'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { makeQuestionComment } from '@/tests/factories/make-question-comment'
 import { InMemoryQuestionCommentsRepository } from '@/tests/repositories/in-memory-question-comments-repository'
@@ -29,12 +30,13 @@ describe('Fetch question comments', () => {
       })
     )
 
-    const { questionComments } = await sut.execute({
+    const result = await sut.execute({
       questionId: 'question-1',
       page: 1,
     })
 
-    expect(questionComments).toHaveLength(3)
+    expect(result).toBeInstanceOf(Success)
+    expect(result.value?.questionComments).toHaveLength(3)
   })
 
   it('should be able to fetch paginated question comments', async () => {
@@ -46,11 +48,12 @@ describe('Fetch question comments', () => {
       )
     }
 
-    const { questionComments } = await sut.execute({
+    const result = await sut.execute({
       page: 2,
       questionId: 'question-1',
     })
 
-    expect(questionComments).toHaveLength(2)
+    expect(result).toBeInstanceOf(Success)
+    expect(result.value?.questionComments).toHaveLength(2)
   })
 })

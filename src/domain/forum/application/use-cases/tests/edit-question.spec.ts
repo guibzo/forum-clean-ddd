@@ -1,7 +1,9 @@
+import { Failure, Success } from '@/core/either-failure-or-success'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { makeQuestion } from '@/tests/factories/make-question'
 import { InMemoryQuestionsRepository } from '@/tests/repositories/in-memory-questions-repository'
 import { EditQuestionUseCase } from '../edit-question'
+import { NotAllowedError } from '../errors/not-allowed-error'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
 let sut: EditQuestionUseCase
@@ -22,13 +24,14 @@ describe('Edit question', () => {
 
     await inMemoryQuestionsRepository.create(newQuestion)
 
-    await sut.execute({
+    const result = await sut.execute({
       authorId: 'author-1',
       questionId: newQuestion.id.toString(),
       content: 'Edited question content',
       title: 'Edited question title',
     })
 
+    expect(result).toBeInstanceOf(Success)
     expect(inMemoryQuestionsRepository.items[0].title).toBe('Edited question title')
     expect(inMemoryQuestionsRepository.items[0].content).toBe('Edited question content')
   })
@@ -43,13 +46,14 @@ describe('Edit question', () => {
 
     await inMemoryQuestionsRepository.create(newQuestion)
 
-    expect(async () => {
-      await sut.execute({
-        authorId: 'author-2',
-        questionId: newQuestion.id.toString(),
-        content: 'Edited question content',
-        title: 'Edited question title',
-      })
-    }).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      authorId: 'author-2',
+      questionId: newQuestion.id.toString(),
+      content: 'Edited question content',
+      title: 'Edited question title',
+    })
+
+    expect(result).toBeInstanceOf(Failure)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

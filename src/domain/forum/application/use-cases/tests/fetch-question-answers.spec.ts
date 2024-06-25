@@ -1,3 +1,4 @@
+import { Success } from '@/core/either-failure-or-success'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { makeAnswer } from '@/tests/factories/make-answer'
 import { InMemoryAnswersRepository } from '@/tests/repositories/in-memory-answers-repository'
@@ -29,12 +30,13 @@ describe('Fetch question answers', () => {
       })
     )
 
-    const { answers } = await sut.execute({
+    const result = await sut.execute({
       questionId: 'question-1',
       page: 1,
     })
 
-    expect(answers).toHaveLength(3)
+    expect(result).toBeInstanceOf(Success)
+    expect(result.value?.answers).toHaveLength(3)
   })
 
   it('should be able to fetch paginated question answers', async () => {
@@ -46,11 +48,12 @@ describe('Fetch question answers', () => {
       )
     }
 
-    const { answers } = await sut.execute({
+    const result = await sut.execute({
       page: 2,
       questionId: 'question-1',
     })
 
-    expect(answers).toHaveLength(2)
+    expect(result).toBeInstanceOf(Success)
+    expect(result.value?.answers).toHaveLength(2)
   })
 })

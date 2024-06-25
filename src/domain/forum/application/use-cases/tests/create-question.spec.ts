@@ -1,3 +1,4 @@
+import { Success } from '@/core/either-failure-or-success'
 import { InMemoryQuestionsRepository } from '@/tests/repositories/in-memory-questions-repository'
 import { CreateQuestionUseCase } from '../create-question'
 
@@ -11,13 +12,13 @@ describe('Create question', () => {
   })
 
   it('should be able to create a question', async () => {
-    const { question } = await sut.execute({
+    const result = await sut.execute({
       authorId: '1',
       content: 'Test content',
       title: 'Test title',
     })
 
-    expect(question.id).toBeTruthy()
-    expect(inMemoryQuestionsRepository.items[0].id).toEqual(question.id)
+    expect(result).toBeInstanceOf(Success)
+    expect(inMemoryQuestionsRepository.items[0]).toEqual(result.value?.question)
   })
 })

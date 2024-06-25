@@ -1,9 +1,11 @@
+import { Failure, Success } from '@/core/either-failure-or-success'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { makeAnswer } from '@/tests/factories/make-answer'
 import { makeQuestion } from '@/tests/factories/make-question'
 import { InMemoryAnswersRepository } from '@/tests/repositories/in-memory-answers-repository'
 import { InMemoryQuestionsRepository } from '@/tests/repositories/in-memory-questions-repository'
 import { ChooseQuestionBestAnswerUseCase } from '../choose-question-best-answer'
+import { NotAllowedError } from '../errors/not-allowed-error'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
 let inMemoryAnswersRepository: InMemoryAnswersRepository
@@ -30,11 +32,12 @@ describe('Choose question best answer', () => {
     await inMemoryQuestionsRepository.create(question)
     await inMemoryAnswersRepository.create(answer)
 
-    await sut.execute({
+    const result = await sut.execute({
       answerId: answer.id.toString(),
       authorId: question.authorId.toString(),
     })
 
+    expect(result).toBeInstanceOf(Success)
     expect(inMemoryQuestionsRepository.items[0].bestAnswerId).toEqual(answer.id)
   })
 
@@ -49,11 +52,12 @@ describe('Choose question best answer', () => {
     await inMemoryQuestionsRepository.create(question)
     await inMemoryAnswersRepository.create(answer)
 
-    expect(async () => {
-      await sut.execute({
-        answerId: answer.id.toString(),
-        authorId: 'author-2',
-      })
-    }).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      answerId: answer.id.toString(),
+      authorId: 'author-2',
+    })
+
+    expect(result).toBeInstanceOf(Failure)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

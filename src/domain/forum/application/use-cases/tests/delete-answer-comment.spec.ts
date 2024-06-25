@@ -1,7 +1,9 @@
+import { Failure, Success } from '@/core/either-failure-or-success'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { makeAnswerComment } from '@/tests/factories/make-answer-comment'
 import { InMemoryAnswerCommentsRepository } from '@/tests/repositories/in-memory-answer-comments-repository'
 import { DeleteAnswerCommentUseCase } from '../delete-answer-comment'
+import { NotAllowedError } from '../errors/not-allowed-error'
 
 let inMemoryAnswerCommentsRepository: InMemoryAnswerCommentsRepository
 let sut: DeleteAnswerCommentUseCase
@@ -22,11 +24,12 @@ describe('Delete answer comment', () => {
 
     await inMemoryAnswerCommentsRepository.create(newAnswer)
 
-    await sut.execute({
+    const result = await sut.execute({
       answerCommentId: 'answer-comment-1',
       authorId: 'author-1',
     })
 
+    expect(result).toBeInstanceOf(Success)
     expect(inMemoryAnswerCommentsRepository.items).toHaveLength(0)
   })
 
@@ -40,11 +43,12 @@ describe('Delete answer comment', () => {
 
     await inMemoryAnswerCommentsRepository.create(newAnswer)
 
-    expect(async () => {
-      await sut.execute({
-        answerCommentId: 'answer-comment-1',
-        authorId: 'author-2',
-      })
-    }).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      answerCommentId: 'answer-comment-1',
+      authorId: 'author-2',
+    })
+
+    expect(result).toBeInstanceOf(Failure)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

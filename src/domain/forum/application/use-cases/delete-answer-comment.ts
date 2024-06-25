@@ -1,7 +1,7 @@
-import { success, type Either } from '@/core/either-failure-or-success'
+import { failure, success, type Either } from '@/core/either-failure-or-success'
 import type { AnswerCommentsRepository } from '../repositories/answer-comments-repository'
-import type { NotAllowedError } from './errors/not-allowed-error'
-import type { ResourceNotFoundError } from './errors/resource-not-found-error'
+import { NotAllowedError } from './errors/not-allowed-error'
+import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 type DeleteAnswerCommentUseCaseRequest = {
   authorId: string
@@ -20,11 +20,11 @@ export class DeleteAnswerCommentUseCase {
     const answerComment = await this.answerCommentsRepository.findById(answerCommentId)
 
     if (!answerComment) {
-      throw new Error('Answer comment not found.')
+      return failure(new ResourceNotFoundError())
     }
 
     if (authorId !== answerComment.authorId.toString()) {
-      throw new Error('Not allowed.')
+      return failure(new NotAllowedError())
     }
 
     await this.answerCommentsRepository.delete(answerComment)

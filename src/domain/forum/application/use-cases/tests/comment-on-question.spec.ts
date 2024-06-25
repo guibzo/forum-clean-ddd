@@ -1,3 +1,4 @@
+import { Success } from '@/core/either-failure-or-success'
 import { makeQuestion } from '@/tests/factories/make-question'
 import { InMemoryQuestionCommentsRepository } from '@/tests/repositories/in-memory-question-comments-repository'
 import { InMemoryQuestionsRepository } from '@/tests/repositories/in-memory-questions-repository'
@@ -23,12 +24,13 @@ describe('Comment on question', () => {
 
     await inMemoryQuestionsRepository.create(question)
 
-    await sut.execute({
+    const result = await sut.execute({
       questionId: question.id.toString(),
       authorId: question.authorId.toString(),
       content: 'Comment content',
     })
 
+    expect(result).toBeInstanceOf(Success)
     expect(inMemoryQuestionCommentsRepository.items[0].content).toEqual('Comment content')
   })
 })

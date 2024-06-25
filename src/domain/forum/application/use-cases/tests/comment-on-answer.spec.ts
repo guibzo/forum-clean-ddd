@@ -1,3 +1,4 @@
+import { Success } from '@/core/either-failure-or-success'
 import { makeAnswer } from '@/tests/factories/make-answer'
 import { InMemoryAnswerCommentsRepository } from '@/tests/repositories/in-memory-answer-comments-repository'
 import { InMemoryAnswersRepository } from '@/tests/repositories/in-memory-answers-repository'
@@ -20,12 +21,13 @@ describe('Comment on answer', () => {
 
     await inMemoryAnswersRepository.create(answer)
 
-    await sut.execute({
+    const result = await sut.execute({
       answerId: answer.id.toString(),
       authorId: answer.authorId.toString(),
       content: 'Comment content',
     })
 
+    expect(result).toBeInstanceOf(Success)
     expect(inMemoryAnswerCommentsRepository.items[0].content).toEqual('Comment content')
   })
 })

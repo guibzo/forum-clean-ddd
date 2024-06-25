@@ -1,3 +1,4 @@
+import { Success } from '@/core/either-failure-or-success'
 import { makeQuestion } from '@/tests/factories/make-question'
 import { InMemoryQuestionsRepository } from '@/tests/repositories/in-memory-questions-repository'
 import { FetchRecentQuestionsUseCase } from '../fetch-recent-questions'
@@ -16,11 +17,12 @@ describe('Fetch recent questions', () => {
     await inMemoryQuestionsRepository.create(makeQuestion({ createdAt: new Date(2024, 0, 18) }))
     await inMemoryQuestionsRepository.create(makeQuestion({ createdAt: new Date(2024, 0, 23) }))
 
-    const { questions } = await sut.execute({
+    const result = await sut.execute({
       page: 1,
     })
 
-    expect(questions).toEqual([
+    expect(result).toBeInstanceOf(Success)
+    expect(result.value?.questions).toEqual([
       expect.objectContaining({ createdAt: new Date(2024, 0, 23) }),
       expect.objectContaining({ createdAt: new Date(2024, 0, 20) }),
       expect.objectContaining({ createdAt: new Date(2024, 0, 18) }),
@@ -32,10 +34,11 @@ describe('Fetch recent questions', () => {
       await inMemoryQuestionsRepository.create(makeQuestion())
     }
 
-    const { questions } = await sut.execute({
+    const result = await sut.execute({
       page: 2,
     })
 
-    expect(questions).toHaveLength(2)
+    expect(result.value?.questions).toHaveLength(2)
+    expect(result).toBeInstanceOf(Success)
   })
 })
