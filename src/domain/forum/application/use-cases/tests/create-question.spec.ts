@@ -16,9 +16,14 @@ describe('Create question', () => {
       authorId: '1',
       content: 'Test content',
       title: 'Test title',
+      attachmentsIds: ['1', '2'],
     })
 
     expect(result).toBeInstanceOf(Success)
     expect(inMemoryQuestionsRepository.items[0]).toEqual(result.value?.question)
+    expect(inMemoryQuestionsRepository.items[0].attachments).toEqual([
+      expect.objectContaining({ attachmentId: '1' }),
+      expect.objectContaining({ attachmentId: '2' }),
+    ])
   })
 })
