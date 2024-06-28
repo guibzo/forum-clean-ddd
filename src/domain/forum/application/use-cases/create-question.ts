@@ -2,6 +2,7 @@ import { success, type Either } from '@/core/either-failure-or-success'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { Question } from '../../enterprise/entities/question'
 import { QuestionAttachment } from '../../enterprise/entities/question-attachment'
+import { QuestionAttachmentsList } from '../../enterprise/entities/question-attachments-list'
 import type { QuestionsRepository } from '../repositories/questions-repository'
 
 type CreateQuestionUseCaseRequest = {
@@ -35,7 +36,7 @@ export class CreateQuestionUseCase {
       })
     })
 
-    question.attachments = questionAttachments
+    question.attachments = new QuestionAttachmentsList(questionAttachments)
 
     await this.questionsRepository.create(question)
 
