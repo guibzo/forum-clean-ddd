@@ -1,6 +1,7 @@
 import { Failure, Success } from '@/core/either-failure-or-success'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { makeQuestion } from '@/tests/factories/make-question'
+import { makeQuestionAttachment } from '@/tests/factories/make-question-attachment'
 import { InMemoryQuestionAttachmentsRepository } from '@/tests/repositories/in-memory-question-attachments-repository'
 import { InMemoryQuestionsRepository } from '@/tests/repositories/in-memory-questions-repository'
 import { DeleteQuestionUseCase } from '../delete-question'
@@ -28,6 +29,17 @@ describe('Delete question', () => {
     )
 
     await inMemoryQuestionsRepository.create(newQuestion)
+
+    inMemoryQuestionAttachmentsRepository.items.push(
+      makeQuestionAttachment({
+        questionId: newQuestion.id,
+        attachmentId: new UniqueEntityID('attachment-1'),
+      }),
+      makeQuestionAttachment({
+        questionId: newQuestion.id,
+        attachmentId: new UniqueEntityID('attachment-2'),
+      })
+    )
 
     const result = await sut.execute({
       questionId: 'question-1',
