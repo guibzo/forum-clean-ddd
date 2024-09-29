@@ -1,12 +1,12 @@
 import { Either, failure, success } from '@/core/either-failure-or-success'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { NotAllowedError } from '@/core/errors/not-allowed-error'
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { Question } from '../../enterprise/entities/question'
 import { QuestionAttachment } from '../../enterprise/entities/question-attachment'
 import { QuestionAttachmentsList } from '../../enterprise/entities/question-attachments-list'
 import type { QuestionAttachmenttsRepository } from '../repositories/question-attachments-repository'
 import { QuestionsRepository } from '../repositories/questions-repository'
-import { NotAllowedError } from './errors/not-allowed-error'
-import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 type EditQuestionUseCaseRequest = {
   authorId: string
@@ -49,7 +49,9 @@ export class EditQuestionUseCase {
     const currentQuestionAttachments =
       await this.questionAttachmentsRepository.findManyByQuestionId(questionId)
 
-    const questionAttachmentsList = new QuestionAttachmentsList(currentQuestionAttachments)
+    const questionAttachmentsList = new QuestionAttachmentsList(
+      currentQuestionAttachments
+    )
 
     const questionAttachments = attachmentsIds.map((attachmentId) => {
       return QuestionAttachment.create({

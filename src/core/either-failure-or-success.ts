@@ -4,14 +4,6 @@ export class Failure<F, S> {
   constructor(value: F) {
     this.value = value
   }
-
-  // isSuccess(): this is Success<F, S> {
-  //   return false
-  // }
-
-  // isFailure(): this is Failure<F, S> {
-  //   return true
-  // }
 }
 
 export class Success<F, S> {
@@ -20,14 +12,6 @@ export class Success<F, S> {
   constructor(value: S) {
     this.value = value
   }
-
-  // isSuccess(): this is Success<F, S> {
-  //   return true
-  // }
-
-  // isFailure(): this is Failure<F, S> {
-  //   return false
-  // }
 }
 
 export type Either<F, S> = Failure<F, S> | Success<F, S>

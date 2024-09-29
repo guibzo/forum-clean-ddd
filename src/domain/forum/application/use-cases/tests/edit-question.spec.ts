@@ -1,11 +1,11 @@
 import { Failure, Success } from '@/core/either-failure-or-success'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { NotAllowedError } from '@/core/errors/not-allowed-error'
 import { makeQuestion } from '@/tests/factories/make-question'
 import { makeQuestionAttachment } from '@/tests/factories/make-question-attachment'
 import { InMemoryQuestionAttachmentsRepository } from '@/tests/repositories/in-memory-question-attachments-repository'
 import { InMemoryQuestionsRepository } from '@/tests/repositories/in-memory-questions-repository'
 import { EditQuestionUseCase } from '../edit-question'
-import { NotAllowedError } from '../errors/not-allowed-error'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
 let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
@@ -13,7 +13,8 @@ let sut: EditQuestionUseCase
 
 describe('Edit question', () => {
   beforeEach(() => {
-    inMemoryQuestionAttachmentsRepository = new InMemoryQuestionAttachmentsRepository()
+    inMemoryQuestionAttachmentsRepository =
+      new InMemoryQuestionAttachmentsRepository()
     inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
       inMemoryQuestionAttachmentsRepository
     )
@@ -53,9 +54,15 @@ describe('Edit question', () => {
     })
 
     expect(result).toBeInstanceOf(Success)
-    expect(inMemoryQuestionsRepository.items[0].attachments.currentItems).toEqual([
-      expect.objectContaining({ attachmentId: new UniqueEntityID('attachment-1') }),
-      expect.objectContaining({ attachmentId: new UniqueEntityID('attachment-3') }),
+    expect(
+      inMemoryQuestionsRepository.items[0].attachments.currentItems
+    ).toEqual([
+      expect.objectContaining({
+        attachmentId: new UniqueEntityID('attachment-1'),
+      }),
+      expect.objectContaining({
+        attachmentId: new UniqueEntityID('attachment-3'),
+      }),
     ])
   })
 

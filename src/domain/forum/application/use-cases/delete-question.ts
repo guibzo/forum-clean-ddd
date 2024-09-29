@@ -1,14 +1,17 @@
 import { failure, success, type Either } from '@/core/either-failure-or-success'
+import { NotAllowedError } from '@/core/errors/not-allowed-error'
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import type { QuestionsRepository } from '../repositories/questions-repository'
-import { NotAllowedError } from './errors/not-allowed-error'
-import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 type DeleteQuestionUseCaseRequest = {
   questionId: string
   authorId: string
 }
 
-type DeleteQuestionUseCaseResponse = Either<NotAllowedError | ResourceNotFoundError, {}>
+type DeleteQuestionUseCaseResponse = Either<
+  NotAllowedError | ResourceNotFoundError,
+  {}
+>
 
 export class DeleteQuestionUseCase {
   constructor(private questionsRepository: QuestionsRepository) {}

@@ -1,9 +1,9 @@
 import { failure, success, type Either } from '@/core/either-failure-or-success'
+import { NotAllowedError } from '@/core/errors/not-allowed-error'
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { Question } from '../../enterprise/entities/question'
 import type { AnswersRepository } from '../repositories/answers-repository'
 import type { QuestionsRepository } from '../repositories/questions-repository'
-import { NotAllowedError } from './errors/not-allowed-error'
-import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 type ChooseQuestionBestAnswerUseCaseRequest = {
   answerId: string
@@ -31,7 +31,9 @@ export class ChooseQuestionBestAnswerUseCase {
       return failure(new ResourceNotFoundError())
     }
 
-    const question = await this.questionsRepository.findById(answer.questionId.toString())
+    const question = await this.questionsRepository.findById(
+      answer.questionId.toString()
+    )
 
     if (!question) {
       return failure(new ResourceNotFoundError())
